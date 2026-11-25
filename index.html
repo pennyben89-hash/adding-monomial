@@ -212,6 +212,9 @@ button.choice:disabled { cursor: default; transform: none; }
 button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
 .expl { font-size: 17px; color: var(--ink); margin-top: 6px; line-height: 1.6; }
 .qcell { font-size: 15px; }
+.ansline { color: var(--good); font-weight: 600; font-size: 0.92em; }
+.pickline { color: var(--bad); font-weight: 600; font-size: 0.92em; }
+
 .pausebtn { font-size: 16px; padding: 4px 12px; color: var(--ink); background: #fff; box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
 .pausebtn:disabled { opacity: .45; cursor: default; transform: none; }
 .playarea { position: relative; }
@@ -241,11 +244,11 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
   <p class="poly-demo">(3x<sup>2</sup>y) + (5x<sup>2</sup>y) = 8x<sup>2</sup>y</p>
   <p class="sub">เอกนามคล้ายกันรวมกันได้ เอกนามไม่คล้ายกันเขียนต่อกัน เช่น (3x<sup>2</sup>) + (5x<sup>3</sup>) = 3x<sup>2</sup> + 5x<sup>3</sup></p>
   <table class="pts" aria-label="เกณฑ์คะแนน">
-    <tr><td><span class="dot" style="background:var(--good)"></span>ตอบถูกภายใน 5 วินาที</td><td>10 คะแนน</td></tr>
-    <tr><td><span class="dot" style="background:var(--mid)"></span>ตอบถูกในวินาทีที่ 5 ถึง 10</td><td>5 คะแนน</td></tr>
-    <tr><td><span class="dot" style="background:var(--accent)"></span>ตอบถูกในวินาทีที่ 10 ถึง 20</td><td>3 คะแนน</td></tr>
+    <tr><td><span class="dot" style="background:var(--good)"></span>ตอบถูกภายใน 10 วินาที</td><td>10 คะแนน</td></tr>
+    <tr><td><span class="dot" style="background:var(--mid)"></span>ตอบถูกในวินาทีที่ 10 ถึง 20</td><td>5 คะแนน</td></tr>
+    <tr><td><span class="dot" style="background:var(--accent)"></span>ตอบถูกในวินาทีที่ 20 ถึง 40</td><td>3 คะแนน</td></tr>
   </table>
-  <p class="sub" style="margin-bottom:20px">พักเกมได้ชุดละ 3 ครั้ง (ตอนพักโจทย์จะถูกซ่อน) ข้อละ 20 วินาที ชุดละ 10 ข้อ รวม 4 ชุด ชุดที่ 1 ตัวแปร x เลขบวก ชุดที่ 2 ตัวแปร x มีเลขลบ ชุดที่ 3 และ 4 มีตัวแปร x และ y ยากขึ้นตามลำดับ</p>
+  <p class="sub" style="margin-bottom:20px">พักเกมได้ชุดละ 3 ครั้ง (ตอนพักโจทย์จะถูกซ่อน) ข้อละ 40 วินาที ชุดละ 10 ข้อ รวม 4 ชุด ชุดที่ 1 ตัวแปร x เลขบวก ชุดที่ 2 ตัวแปร x มีเลขลบ ชุดที่ 3 และ 4 มีตัวแปร x และ y ยากขึ้นตามลำดับ</p>
   <div class="center"><button id="btnStart" type="button">ต่อไป</button></div>
 </section>
 
@@ -283,7 +286,7 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
     <span>คะแนน <b id="score">0</b></span>
   </div>
   <div class="timebox">
-    <div class="clock" id="clock" aria-live="off">20.0</div>
+    <div class="clock" id="clock" aria-live="off">40.0</div>
     <button type="button" class="pausebtn" id="btnPause">พัก (3)</button>
     <div class="worth w10" id="worth">ตอนนี้ได้ 10 คะแนน</div>
   </div>
@@ -349,11 +352,11 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
 (function () {
   // Paste the Web app URL from Google Apps Script between the quotes to send scores to the teacher's sheet.
   // Leave it empty to play without sending anything.
-  var SCRIPT_URL = '';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOxU7f92M0LYcoRaib95AVVTnsmp1HOU7MuTsDIewMQdBB9hSO5lA8yJwIK3y6HcOe/exec';
   var GAME_ID = 'monomial';
 
   var MAX_PAUSE = 3; // pauses allowed per set
-  var TOTAL = 10, LIMIT = 20, SETS = 4;
+  var TOTAL = 10, LIMIT = 40, SETS = 4;
   var MULT = [1, 1, 1, 1]; // score multiplier for each set
   var CONF = [
     { vars: 1, maxDeg: 3, lo: 1, hi: 20, neg: false },
@@ -584,7 +587,7 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
     ['start', 'register', 'game', 'result', 'final'].forEach(function (s) { $(s).classList.toggle('hidden', s !== id); });
   }
   function pointsFor(sec) {
-    var base = sec < 5 ? 10 : sec < 10 ? 5 : sec < LIMIT ? 3 : 0;
+    var base = sec < 10 ? 10 : sec < 20 ? 5 : sec < LIMIT ? 3 : 0;
     return base * mult();
   }
   function grand() { return setScores.reduce(function (s, v) { return s + v.score; }, 0); }
@@ -705,7 +708,7 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
     });
     score += points;
     $('score').textContent = score;
-    results.push({ q: cur.qhtml, sec: sec, pts: points, ok: ok });
+    results.push({ q: cur.qhtml, a: cur.opts[cur.correctIdx], pick: (chosen >= 0 && chosen !== cur.correctIdx) ? cur.opts[chosen] : '', sec: sec, pts: points, ok: ok });
     clearTimeout(advTimer);
     advTimer = setTimeout(nextRound, ok ? 1800 : 5000);
   }
@@ -761,7 +764,7 @@ button.choice:disabled:not(.right):not(.wrong) { opacity: .55; }
       : 'ทบทวนเรื่องเอกนามคล้ายกันแล้วลองใหม่';
     $('logBody').innerHTML = results.map(function (r, i) {
       var t = r.ok ? r.sec.toFixed(1) + ' วิ' : (r.sec >= LIMIT ? 'หมดเวลา' : 'ตอบผิด');
-      return '<tr><td>' + (i + 1) + '</td><td class="qcell">' + r.q + '</td><td>' + t + '</td><td>' + r.pts + '</td></tr>';
+      return '<tr><td>' + (i + 1) + '</td><td class="qcell">' + r.q + '<div class="ansline">เฉลย ' + r.a + '</div>' + (r.pick ? '<div class="pickline">ตอบ ' + r.pick + '</div>' : '') + '</td><td>' + t + '</td><td>' + r.pts + '</td></tr>';
     }).join('');
     show('result');
     (last ? $('btnStop') : $('btnContinue')).focus();
